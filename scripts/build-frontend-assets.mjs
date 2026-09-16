@@ -1,3 +1,5 @@
+// Copy compiled contract keys and ZKIR into frontend/dist so the browser
+// wallet can load them without reaching back into contracts/build.
 import { cpSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
