@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SealML demo seed — the complete registry flow end to end:
 # register -> dataset -> evaluator -> evaluate -> issue -> verify.
-# Idempotent: skips steps that already exist. Requires the backend running.
+# Idempotent: skips steps that already exist. Requires the backend running
+# (npm start in another terminal).
 set -u
 BASE="${BASE_URL:-http://127.0.0.1:3000}"
 
