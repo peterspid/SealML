@@ -83,7 +83,7 @@ On Windows, use Git Bash or WSL for the `.sh` helpers. PowerShell users can run 
 
 ## Midnight preprod
 
-Local mirror mode is the default when the wallet or all six deployed addresses are missing. It deliberately keeps the same validation and circuit payloads, but returns `chainTx: null` and does not claim that a write reached Midnight.
+Local mirror mode is the default unless a wallet seed and all six deployed addresses are configured. It deliberately keeps the same validation and circuit payloads, but returns `chainTx: null` and does not claim that a write reached Midnight.
 
 To anchor real writes:
 
