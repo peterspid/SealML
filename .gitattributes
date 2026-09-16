@@ -1,0 +1,8 @@
+# Keep line endings consistent (LF) so checked-out files never pick up CRLF.
+* text=auto eol=lf
+
+# Compiled contract key material is binary, not diffable text.
+# (.zkir stays text so its JSON diffs remain readable.)
+*.prover binary
+*.verifier binary
+*.bzkir binary
