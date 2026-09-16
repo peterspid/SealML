@@ -63,13 +63,13 @@ npm run build
 npm start
 ```
 
-Open <http://localhost:3000>. The landing page is at `/#/`; the operational workspace is at `/#/dashboard`.
+Open <http://127.0.0.1:3000>. The landing page is at `/#/`; the operational workspace is at `/#/dashboard`.
 
 Useful checks:
 
 ```bash
-curl http://localhost:3000/api/health
-curl http://localhost:3000/api/chain/status
+curl http://127.0.0.1:3000/api/health
+curl http://127.0.0.1:3000/api/chain/status
 npm test
 ```
 
