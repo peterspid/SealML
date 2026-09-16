@@ -73,7 +73,7 @@ curl http://localhost:3000/api/chain/status
 npm test
 ```
 
-The test suite starts its own backend when needed, clears the local ledger, and covers the API lifecycle from registration through verification, expiry, revocation, restoration, and recertification. Re-seed the demo afterward if you want the dashboard populated:
+The API end-to-end tests run against a live backend, so keep `npm start` running in another terminal and then run `npm test`. Each run uses unique IDs, so reruns never collide with stored state. The suite covers the API lifecycle from registration through verification, expiry, revocation, restoration, and recertification. Re-seed the demo afterward if you want the dashboard populated:
 
 ```bash
 bash scripts/seed-demo.sh
