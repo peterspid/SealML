@@ -1,5 +1,6 @@
 // SealML evaluation-engine tests: metrics math on the sample CSV and the
-// attestation guard that refuses raw-data fields. Runs: python3 runner.
+// attestation guard that refuses raw-data fields. Runs via the system
+// python3 interpreter against the scripts in evaluation-engine/.
 import { test } from "node:test";
 import assert from "node:assert";
 import { execFileSync } from "node:child_process";
