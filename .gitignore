@@ -1,0 +1,9 @@
+node_modules/
+dist/
+data/ledger.json
+data/addresses.json
+.env.preprod
+evaluation-engine/__pycache__/
+*.pyc
+
+.vercel

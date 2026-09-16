@@ -1,0 +1,43 @@
+// SealML EvaluatorRegistry — authorized evaluators.
+// Only evaluators with authorized == true may submit evaluations or
+// revoke certifications. Authorization changes require the governor
+// commitment, initialized once after deployment.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger governor: Bytes<32>;
+export ledger governorSet: Boolean;
+
+export circuit initGovernor(g: Bytes<32>): [] {
+  assert(!governorSet, "governor already initialized");
+  governor = disclose(g);
+  governorSet = true;
+}
+
+export ledger evaluatorRole: Map<Bytes<32>, Opaque<"string">>;
+export ledger evaluatorOrg: Map<Bytes<32>, Opaque<"string">>;
+export ledger evaluatorCredential: Map<Bytes<32>, Bytes<32>>;
+export ledger evaluatorAuthorized: Map<Bytes<32>, Boolean>;
+export ledger evaluatorExpiry: Map<Bytes<32>, Uint<64>>;
+
+export circuit registerEvaluator(
+  evaluatorKey: Bytes<32>,
+  role: Opaque<"string">,
+  org: Opaque<"string">,
+  credential: Bytes<32>,
+  expiresAt: Uint<64>
+): [] {
+  assert(!evaluatorAuthorized.member(disclose(evaluatorKey)), "evaluator already registered");
+  evaluatorRole.insert(disclose(evaluatorKey), disclose(role));
+  evaluatorOrg.insert(disclose(evaluatorKey), disclose(org));
+  evaluatorCredential.insert(disclose(evaluatorKey), disclose(credential));
+  evaluatorAuthorized.insert(disclose(evaluatorKey), true);
+  evaluatorExpiry.insert(disclose(evaluatorKey), disclose(expiresAt));
+}
+
+export circuit setEvaluatorAuthorized(evaluatorKey: Bytes<32>, authorized: Boolean, authority: Bytes<32>): [] {
+  assert(evaluatorAuthorized.member(disclose(evaluatorKey)), "unknown evaluator");
+  assert(governorSet, "no governor");
+  assert(authority == governor, "not governor");
+  evaluatorAuthorized.insert(disclose(evaluatorKey), disclose(authorized));
+}

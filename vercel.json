@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "contracts/build/**,data/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api" }
+  ]
+}

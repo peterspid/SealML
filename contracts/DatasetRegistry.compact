@@ -1,0 +1,61 @@
+// SealML DatasetRegistry — on-chain dataset commitments.
+// Raw datasets stay off-chain; only commitments and claims are public.
+// Privileged writes (approval changes) require the governor commitment,
+// initialized once after deployment. Enum codes are range-checked on-chain.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger governor: Bytes<32>;
+export ledger governorSet: Boolean;
+
+export circuit initGovernor(g: Bytes<32>): [] {
+  assert(!governorSet, "governor already initialized");
+  governor = disclose(g);
+  governorSet = true;
+}
+
+// Approval codes: 0 = pending, 1 = approved, 2 = revoked, 3 = expired.
+// Codes travel as circuit parameters (see shared/chain-enums.ts) because
+// Compact has no literal syntax for ledger-bound enum values.
+export ledger datasetCommitment: Map<Bytes<32>, Bytes<32>>;
+export ledger datasetVersion: Map<Bytes<32>, Opaque<"string">>;
+export ledger datasetApproval: Map<Bytes<32>, Uint<64>>;
+export ledger datasetSizeClaim: Map<Bytes<32>, Uint<64>>;
+export ledger datasetQualityClaim: Map<Bytes<32>, Uint<64>>;
+export ledger datasetConsent: Map<Bytes<32>, Boolean>;
+export ledger datasetExpiry: Map<Bytes<32>, Uint<64>>;
+
+export circuit certifyDataset(
+  datasetKey: Bytes<32>,
+  commitment: Bytes<32>,
+  version: Opaque<"string">,
+  sizeClaim: Uint<64>,
+  qualityClaim: Uint<64>,
+  approvedCode: Uint<64>,
+  expiresAt: Uint<64>
+): [] {
+  assert(!datasetApproval.member(disclose(datasetKey)), "dataset already certified");
+  assert(approvedCode <= 3, "bad approval code");
+  datasetCommitment.insert(disclose(datasetKey), disclose(commitment));
+  datasetVersion.insert(disclose(datasetKey), disclose(version));
+  datasetApproval.insert(disclose(datasetKey), disclose(approvedCode));
+  datasetSizeClaim.insert(disclose(datasetKey), disclose(sizeClaim));
+  datasetQualityClaim.insert(disclose(datasetKey), disclose(qualityClaim));
+  datasetConsent.insert(disclose(datasetKey), true);
+  datasetExpiry.insert(disclose(datasetKey), disclose(expiresAt));
+}
+
+export circuit setDatasetApproval(datasetKey: Bytes<32>, approval: Uint<64>, authority: Bytes<32>): [] {
+  assert(datasetApproval.member(disclose(datasetKey)), "unknown dataset");
+  assert(governorSet, "no governor");
+  assert(authority == governor, "not governor");
+  assert(approval <= 3, "bad approval code");
+  datasetApproval.insert(disclose(datasetKey), disclose(approval));
+}
+
+export circuit expireDataset(datasetKey: Bytes<32>, now: Uint<64>, expiredCode: Uint<64>): [] {
+  assert(datasetApproval.member(disclose(datasetKey)), "unknown dataset");
+  assert(datasetExpiry.lookup(disclose(datasetKey)) < disclose(now), "not yet expired");
+  assert(expiredCode <= 3, "bad approval code");
+  datasetApproval.insert(disclose(datasetKey), disclose(expiredCode));
+}

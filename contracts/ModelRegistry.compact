@@ -1,0 +1,49 @@
+// SealML ModelRegistry — on-chain record of model fingerprints.
+// Key: sha256(modelId) as Bytes<32> (computed off-chain).
+// Public: hash, version, category, owner commitment, active flag.
+// The raw model file never touches the ledger.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger modelHash: Map<Bytes<32>, Bytes<32>>;
+export ledger modelVersion: Map<Bytes<32>, Opaque<"string">>;
+export ledger modelCategory: Map<Bytes<32>, Opaque<"string">>;
+export ledger modelOwner: Map<Bytes<32>, Bytes<32>>;
+export ledger modelRegisteredAt: Map<Bytes<32>, Uint<64>>;
+export ledger modelActive: Map<Bytes<32>, Boolean>;
+
+export circuit registerModel(
+  modelKey: Bytes<32>,
+  hash: Bytes<32>,
+  version: Opaque<"string">,
+  category: Opaque<"string">,
+  ownerCommitment: Bytes<32>,
+  registeredAt: Uint<64>
+): [] {
+  assert(!modelActive.member(disclose(modelKey)), "model already registered");
+  modelHash.insert(disclose(modelKey), disclose(hash));
+  modelVersion.insert(disclose(modelKey), disclose(version));
+  modelCategory.insert(disclose(modelKey), disclose(category));
+  modelOwner.insert(disclose(modelKey), disclose(ownerCommitment));
+  modelRegisteredAt.insert(disclose(modelKey), disclose(registeredAt));
+  modelActive.insert(disclose(modelKey), true);
+}
+
+export circuit updateModelVersion(
+  modelKey: Bytes<32>,
+  newHash: Bytes<32>,
+  newVersion: Opaque<"string">,
+  ownerCommitment: Bytes<32>
+): [] {
+  assert(modelActive.member(disclose(modelKey)), "unknown model");
+  assert(modelActive.lookup(disclose(modelKey)) == true, "model deactivated");
+  assert(modelOwner.lookup(disclose(modelKey)) == ownerCommitment, "not owner");
+  modelHash.insert(disclose(modelKey), disclose(newHash));
+  modelVersion.insert(disclose(modelKey), disclose(newVersion));
+}
+
+export circuit deactivateModel(modelKey: Bytes<32>, ownerCommitment: Bytes<32>): [] {
+  assert(modelActive.member(disclose(modelKey)), "unknown model");
+  assert(modelOwner.lookup(disclose(modelKey)) == ownerCommitment, "not owner");
+  modelActive.insert(disclose(modelKey), false);
+}

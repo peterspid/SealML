@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../",
+  "sources": ["RevocationRegistry.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAGA;;;;;;;;;;MAQA,AAAA,mBAYC;;;;;cAXC,eAAwB;cACxB,SAAkB;cAClB,QAAwB;cACxB,mBAA4B;cAC5B,WAAmB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;yCAJnB,eAAwB,+BACxB,SAAkB,+BAClB,QAAwB,+BACxB,mBAA4B,+BAC5B,WAAmB;;;;;;;;;qDAJnB,eAAwB;qDACxB,SAAkB;qDAClB,QAAwB;qDACxB,mBAA4B;qDAC5B,WAAmB;;;OAOpB;;;;;;;;GACA;EArBD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAGA;;;;;;;;;;yEAAwD;IACxD;;;;;;;;;;yEAAiE;IACjE;;;;;;;;;;yEAAuD;IACvD;;;;;;;;;;yEAA2D;;;;;;;GAe1D;EAbD,AAAA,sBAYC;;yBAXC,eAAwB;yBACxB,SAAkB;yBAClB,QAAwB;yBACxB,mBAA4B;yBAC5B,WAAmB;;qDAEX;;;;;;;;;;;4KAA+B,eAAa;;;;0HAA9B;;IACtB;;;;;;;;;;2HAA+B,eAAa;;;2HAAY,SAAO;;;wEAAjD;IACd;;;;;;;;;;2HAAiC,eAAa;;;2HAAY,QAAM;;;wEAAhD;IAChB;;;;;;;;;;2HAA+B,eAAa;;;2HAAY,WAAS;;;wEAAnD;IACd;;;;;;;;;;2HAAkC,eAAa;;;2HAAY,mBAAiB;;;wEAA3D;;GAClB;;;;;;;;;;;;;;;;IAjBD;;;;;uCAAA;;;;;;;;;;;;;;;;4GAAwD;;;;;;uCAAxD;;;;;;;;;;;;4GAAwD;;;;;;;;;;;;;;uCAAxD;;;;;;;;;;;;;;;4GAAwD;;;;;;;;;;;;;;uCAAxD;;;;;;;;;;;;;;;;;4GAAwD;;;;;;;;;KAAA;IACxD;;;;;uCAAA;;;;;;;;;;;;;;;;4GAAiE;;;;;;uCAAjE;;;;;;;;;;;;4GAAiE;;;;;;;;;;;;;;uCAAjE;;;;;;;;;;;;;;;4GAAiE;;;;;;;;;;;;;;uCAAjE;;;;;;;;;;;;;;;;;4GAAiE;;;;;;;;;KAAA;IACjE;;;;;uCAAA;;;;;;;;;;;;;;;;4GAAuD;;;;;;uCAAvD;;;;;;;;;;;;4GAAuD;;;;;;;;;;;;;;uCAAvD;;;;;;;;;;;;;;;4GAAuD;;;;;;;;;;;;;;uCAAvD;;;;;;;;;;;;;;;;;4GAAuD;;;;;;;;;KAAA;IACvD;;;;;uCAAA;;;;;;;;;;;;;;;;4GAA2D;;;;;;uCAA3D;;;;;;;;;;;;4GAA2D;;;;;;;;;;;;;;uCAA3D;;;;;;;;;;;;;;;4GAA2D;;;;;;;;;;;;;;uCAA3D;;;;;;;;;;;;;;;;;4GAA2D;;;;;;;;;KAAA;;;;;;;;;;"
+}

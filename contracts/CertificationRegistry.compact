@@ -1,0 +1,115 @@
+// SealML CertificationRegistry — certification lifecycle.
+// Status codes: 0 = Active, 1 = Expired, 2 = Revoked (see shared/chain-enums).
+// Codes are range-checked on-chain. Revocation, restoration and
+// supersession require the governor commitment, initialized once after
+// deployment. Expiry stays permissionless: anyone may mark a truly lapsed
+// certification expired.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger governor: Bytes<32>;
+export ledger governorSet: Boolean;
+
+export circuit initGovernor(g: Bytes<32>): [] {
+  assert(!governorSet, "governor already initialized");
+  governor = disclose(g);
+  governorSet = true;
+}
+
+// Status codes: 0 = Active, 1 = Expired, 2 = Revoked.
+// Codes travel as circuit parameters (see shared/chain-enums.ts) because
+// Compact has no literal syntax for ledger-bound enum values.
+export ledger certModel: Map<Bytes<32>, Bytes<32>>;
+export ledger certEvaluation: Map<Bytes<32>, Bytes<32>>;
+export ledger certStatus: Map<Bytes<32>, Uint<64>>;
+export ledger certIssuedAt: Map<Bytes<32>, Uint<64>>;
+export ledger certExpiresAt: Map<Bytes<32>, Uint<64>>;
+export ledger badgeDataset: Map<Bytes<32>, Boolean>;
+export ledger badgeAccuracy: Map<Bytes<32>, Boolean>;
+export ledger badgeEvaluator: Map<Bytes<32>, Boolean>;
+export ledger badgeVersion: Map<Bytes<32>, Boolean>;
+
+export circuit issueCertification(
+  certKey: Bytes<32>,
+  modelKey: Bytes<32>,
+  evaluationKey: Bytes<32>,
+  issuedAt: Uint<64>,
+  expiresAt: Uint<64>,
+  activeCode: Uint<64>,
+  datasetOk: Boolean,
+  accuracyOk: Boolean,
+  evaluatorOk: Boolean,
+  versionOk: Boolean
+): [] {
+  assert(!certStatus.member(disclose(certKey)), "certification already issued");
+  assert(expiresAt > issuedAt, "expiry must follow issuance");
+  assert(activeCode <= 2, "bad status code");
+  assert(datasetOk, "dataset claim not satisfied");
+  assert(accuracyOk, "accuracy claim not satisfied");
+  assert(evaluatorOk, "evaluator not authorized");
+  assert(versionOk, "model version not verified");
+  certModel.insert(disclose(certKey), disclose(modelKey));
+  certEvaluation.insert(disclose(certKey), disclose(evaluationKey));
+  certStatus.insert(disclose(certKey), disclose(activeCode));
+  certIssuedAt.insert(disclose(certKey), disclose(issuedAt));
+  certExpiresAt.insert(disclose(certKey), disclose(expiresAt));
+  badgeDataset.insert(disclose(certKey), disclose(datasetOk));
+  badgeAccuracy.insert(disclose(certKey), disclose(accuracyOk));
+  badgeEvaluator.insert(disclose(certKey), disclose(evaluatorOk));
+  badgeVersion.insert(disclose(certKey), disclose(versionOk));
+}
+
+export circuit expireCertification(
+  certKey: Bytes<32>,
+  now: Uint<64>,
+  expectActive: Uint<64>,
+  expiredCode: Uint<64>
+): [] {
+  assert(certStatus.member(disclose(certKey)), "unknown certification");
+  assert(certStatus.lookup(disclose(certKey)) == expectActive, "not active");
+  assert(certExpiresAt.lookup(disclose(certKey)) < disclose(now), "not yet expired");
+  assert(expiredCode <= 2, "bad status code");
+  certStatus.insert(disclose(certKey), disclose(expiredCode));
+}
+
+export circuit markRevoked(
+  certKey: Bytes<32>,
+  expectActive: Uint<64>,
+  revokedCode: Uint<64>,
+  authority: Bytes<32>
+): [] {
+  assert(certStatus.member(disclose(certKey)), "unknown certification");
+  assert(certStatus.lookup(disclose(certKey)) == expectActive, "not active");
+  assert(governorSet, "no governor");
+  assert(authority == governor, "not governor");
+  assert(revokedCode <= 2, "bad status code");
+  certStatus.insert(disclose(certKey), disclose(revokedCode));
+}
+
+export circuit markSuperseded(
+  certKey: Bytes<32>,
+  expectActive: Uint<64>,
+  expiredCode: Uint<64>,
+  authority: Bytes<32>
+): [] {
+  assert(certStatus.member(disclose(certKey)), "unknown certification");
+  assert(certStatus.lookup(disclose(certKey)) == expectActive, "not active");
+  assert(governorSet, "no governor");
+  assert(authority == governor, "not governor");
+  assert(expiredCode <= 2, "bad status code");
+  certStatus.insert(disclose(certKey), disclose(expiredCode));
+}
+
+export circuit restoreCertification(
+  certKey: Bytes<32>,
+  expectRevoked: Uint<64>,
+  activeCode: Uint<64>,
+  authority: Bytes<32>
+): [] {
+  assert(certStatus.member(disclose(certKey)), "unknown certification");
+  assert(certStatus.lookup(disclose(certKey)) == expectRevoked, "not revoked");
+  assert(governorSet, "no governor");
+  assert(authority == governor, "not governor");
+  assert(activeCode <= 2, "bad status code");
+  certStatus.insert(disclose(certKey), disclose(activeCode));
+}

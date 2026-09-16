@@ -1,0 +1,24 @@
+// SealML RevocationRegistry — invalidation records.
+// Reasons: "model-modified", "bad-evaluation", "invalid-dataset",
+// "evaluator-misconduct", "security-issue".
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger revocationCert: Map<Bytes<32>, Bytes<32>>;
+export ledger revocationReason: Map<Bytes<32>, Opaque<"string">>;
+export ledger revocationTime: Map<Bytes<32>, Uint<64>>;
+export ledger revocationRevoker: Map<Bytes<32>, Bytes<32>>;
+
+export circuit revokeCertification(
+  revocationKey: Bytes<32>,
+  certKey: Bytes<32>,
+  reason: Opaque<"string">,
+  revokerCommitment: Bytes<32>,
+  timestamp: Uint<64>
+): [] {
+  assert(!revocationTime.member(disclose(revocationKey)), "revocation already recorded");
+  revocationCert.insert(disclose(revocationKey), disclose(certKey));
+  revocationReason.insert(disclose(revocationKey), disclose(reason));
+  revocationTime.insert(disclose(revocationKey), disclose(timestamp));
+  revocationRevoker.insert(disclose(revocationKey), disclose(revokerCommitment));
+}

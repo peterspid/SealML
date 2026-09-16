@@ -1,0 +1,71 @@
+// SealML EvaluationRegistry — claim-only evaluation records.
+// Stores threshold claims (booleans), linkage commitments (model hash,
+// dataset commitment, evaluator authorization snapshot) and fairness
+// summaries — never raw predictions, datasets or model weights.
+// The evaluator-authorized flag is asserted on-chain: evaluations for
+// unauthorized evaluators cannot be recorded.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger evalModel: Map<Bytes<32>, Bytes<32>>;
+export ledger evalDataset: Map<Bytes<32>, Bytes<32>>;
+export ledger evalEvaluator: Map<Bytes<32>, Bytes<32>>;
+export ledger evalModelHash: Map<Bytes<32>, Bytes<32>>;
+export ledger evalDatasetCommitment: Map<Bytes<32>, Bytes<32>>;
+export ledger evalEvaluatorAuth: Map<Bytes<32>, Boolean>;
+export ledger evalAccuracyMet: Map<Bytes<32>, Boolean>;
+export ledger evalPrecisionMet: Map<Bytes<32>, Boolean>;
+export ledger evalRecallMet: Map<Bytes<32>, Boolean>;
+export ledger evalErrorMet: Map<Bytes<32>, Boolean>;
+export ledger evalMinSamples: Map<Bytes<32>, Uint<64>>;
+export ledger evalSamples: Map<Bytes<32>, Uint<64>>;
+export ledger evalFairnessMet: Map<Bytes<32>, Boolean>;
+export ledger evalFairnessDelta: Map<Bytes<32>, Uint<64>>;
+export ledger evalFairnessThreshold: Map<Bytes<32>, Uint<64>>;
+export ledger evalFairnessMetric: Map<Bytes<32>, Opaque<"string">>;
+export ledger evalProof: Map<Bytes<32>, Bytes<32>>;
+export ledger evalTime: Map<Bytes<32>, Uint<64>>;
+
+export circuit submitEvaluation(
+  evaluationKey: Bytes<32>,
+  modelKey: Bytes<32>,
+  datasetKey: Bytes<32>,
+  evaluatorKey: Bytes<32>,
+  modelHash: Bytes<32>,
+  datasetCommitment: Bytes<32>,
+  evaluatorAuthorized: Boolean,
+  accuracyMet: Boolean,
+  precisionMet: Boolean,
+  recallMet: Boolean,
+  errorMet: Boolean,
+  minSamples: Uint<64>,
+  samplesEvaluated: Uint<64>,
+  fairnessMet: Boolean,
+  fairnessDelta: Uint<64>,
+  fairnessThreshold: Uint<64>,
+  fairnessMetric: Opaque<"string">,
+  proofCommitment: Bytes<32>,
+  evalTimestamp: Uint<64>
+): [] {
+  assert(!evalTime.member(disclose(evaluationKey)), "evaluation already submitted");
+  assert(evaluatorAuthorized, "evaluator not authorized");
+  assert(samplesEvaluated > minSamples, "sample minimum not reached");
+  evalModel.insert(disclose(evaluationKey), disclose(modelKey));
+  evalDataset.insert(disclose(evaluationKey), disclose(datasetKey));
+  evalEvaluator.insert(disclose(evaluationKey), disclose(evaluatorKey));
+  evalModelHash.insert(disclose(evaluationKey), disclose(modelHash));
+  evalDatasetCommitment.insert(disclose(evaluationKey), disclose(datasetCommitment));
+  evalEvaluatorAuth.insert(disclose(evaluationKey), disclose(evaluatorAuthorized));
+  evalAccuracyMet.insert(disclose(evaluationKey), disclose(accuracyMet));
+  evalPrecisionMet.insert(disclose(evaluationKey), disclose(precisionMet));
+  evalRecallMet.insert(disclose(evaluationKey), disclose(recallMet));
+  evalErrorMet.insert(disclose(evaluationKey), disclose(errorMet));
+  evalMinSamples.insert(disclose(evaluationKey), disclose(minSamples));
+  evalSamples.insert(disclose(evaluationKey), disclose(samplesEvaluated));
+  evalFairnessMet.insert(disclose(evaluationKey), disclose(fairnessMet));
+  evalFairnessDelta.insert(disclose(evaluationKey), disclose(fairnessDelta));
+  evalFairnessThreshold.insert(disclose(evaluationKey), disclose(fairnessThreshold));
+  evalFairnessMetric.insert(disclose(evaluationKey), disclose(fairnessMetric));
+  evalProof.insert(disclose(evaluationKey), disclose(proofCommitment));
+  evalTime.insert(disclose(evaluationKey), disclose(evalTimestamp));
+}
