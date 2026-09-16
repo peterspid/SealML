@@ -13,9 +13,10 @@ def load_counts(path):
     groups = {}
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
-        if "label" not in (reader.fieldnames or []) or "pred" not in (reader.fieldnames or []):
+        fieldnames = reader.fieldnames or []
+        if "label" not in fieldnames or "pred" not in fieldnames:
             raise ValueError("CSV must have label,pred columns")
-        has_group = "group" in (reader.fieldnames or [])
+        has_group = "group" in fieldnames
         for row in reader:
             try:
                 label = int(row["label"])
