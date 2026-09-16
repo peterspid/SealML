@@ -1,3 +1,5 @@
+// Browser wallet deployer — deploys the six SealML registries from the
+// user's own wallet and reports each contract address back to the UI.
 import { deployContract, findDeployedContract, createCircuitCallTxInterface } from "@midnight-ntwrk/midnight-js/contracts";
 import { CompiledContract } from "@midnight-ntwrk/midnight-js-protocol/compact-js";
 import { FetchZkConfigProvider } from "@midnight-ntwrk/midnight-js-fetch-zk-config-provider";
