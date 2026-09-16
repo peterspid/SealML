@@ -12,8 +12,9 @@ export interface AppConfig {
   proofServerUrl: string;
   walletSeed: string | null;
   // Backend API gate for privileged calls (authorize, approval, restore).
-  // Its sha256 commitment is also the on-chain governor, initialized by
-  // the deploy script. Default is local-dev only — never use in production.
+  // Its commitment, sha256("governor:<secret>"), is also the on-chain
+  // governor, initialized by the deploy script. Default is local-dev
+  // only — never use in production.
   adminSecret: string;
   addresses: Record<string, string>;
   ledgerFile: string;
