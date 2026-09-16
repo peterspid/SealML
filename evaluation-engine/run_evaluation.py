@@ -9,7 +9,7 @@ Usage:
       --model-id FraudDetector-v1 --dataset-id FraudDataset-v3 \\
       --evaluator-id eval-uni-01 \\
       --thresholds '{"accuracy":0.9,"precision":0.85,"recall":0.8,"error-rate":0.1,"minSamples":50000}' \\
-      [--fairness-threshold 0.05 --api http://localhost:3000 --out attestation.json]
+      [--fairness-threshold 0.05 --api http://127.0.0.1:3000 --out attestation.json]
 """
 import argparse
 import json
