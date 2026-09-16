@@ -68,7 +68,7 @@ export interface MetricClaim {
 }
 
 export interface FairnessClaim {
-  metric: string; // exact metric name, e.g. "equalized-odds-delta"
+  metric: string; // exact metric name, e.g. "group-error-rate-delta"
   groups: string[];
   delta: number; // observed difference (claim)
   threshold: number; // allowed maximum
