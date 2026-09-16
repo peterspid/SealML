@@ -19,7 +19,6 @@ export const CERT_STATUS_LABEL: Record<number, CertificationStatus> = {
   2: "Revoked",
 };
 
-// 0 = pending, 1 = approved, 2 = revoked, 3 = expired
 export const DATASET_APPROVAL = {
   pending: 0,
   approved: 1,
