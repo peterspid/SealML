@@ -13,6 +13,7 @@ export const CERT_STATUS: Record<CertificationStatus, number> = {
   Revoked: 2,
 };
 
+
 export const CERT_STATUS_LABEL: Record<number, CertificationStatus> = {
   0: "Active",
   1: "Expired",
